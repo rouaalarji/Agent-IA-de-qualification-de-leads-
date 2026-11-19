@@ -1,0 +1,22 @@
+services:
+  backend:
+    build: .
+    environment:
+      # Clé Groq optionnelle : sans elle, l'agent utilise les règles.
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+    volumes:
+      - lead_data:/data        # CRM (SQLite) + pauses de validation, conservés entre deux démarrages
+    ports:
+      - "8000:8000"            # API + documentation : http://localhost:8000/docs
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"              # Interface : http://localhost:8080
+    restart: unless-stopped
+
+volumes:
+  lead_data:
